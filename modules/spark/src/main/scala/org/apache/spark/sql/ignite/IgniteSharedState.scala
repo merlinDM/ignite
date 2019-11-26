@@ -19,7 +19,7 @@ package org.apache.spark.sql.ignite
 
 import org.apache.ignite.spark.IgniteContext
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.catalyst.catalog.{ExternalCatalog, ExternalCatalogEvent, ExternalCatalogEventListener}
+import org.apache.spark.sql.catalyst.catalog.{ExternalCatalog, ExternalCatalogEvent, ExternalCatalogEventListener, ExternalCatalogWithListener}
 import org.apache.spark.sql.internal.SharedState
 
 /**
@@ -29,8 +29,9 @@ private[ignite] class IgniteSharedState (
     igniteContext: IgniteContext,
     sparkContext: SparkContext) extends SharedState(sparkContext) {
     /** @inheritdoc */
-    override lazy val externalCatalog: ExternalCatalog = {
-        val externalCatalog = new IgniteExternalCatalog(igniteContext)
+    override lazy val externalCatalog: ExternalCatalogWithListener = {
+        val igniteCatalog = new IgniteExternalCatalog(igniteContext)
+        val externalCatalog = new ExternalCatalogWithListener(igniteCatalog)
 
         externalCatalog.addListener(new ExternalCatalogEventListener {
             override def onEvent(event: ExternalCatalogEvent): Unit = {

@@ -62,7 +62,7 @@ class IgniteRDD[K, V] (
 
         val cur = cache.query(qry)
 
-        TaskContext.get().addTaskCompletionListener((_) ⇒ cur.close())
+        TaskContext.get().addTaskCompletionListener[Unit]((_) ⇒ cur.close())
 
         new IgniteQueryIterator[Cache.Entry[K, V], (K, V)](cur.iterator(), entry ⇒ {
             (entry.getKey, entry.getValue)

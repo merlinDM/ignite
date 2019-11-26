@@ -36,7 +36,7 @@ class IgniteSqlRDD[R: ClassTag, T, K, V](
     override def compute(split: Partition, context: TaskContext): Iterator[R] = {
         val cur = ensureCache().query(qry)
 
-        TaskContext.get().addTaskCompletionListener((_) ⇒ cur.close())
+        TaskContext.get().addTaskCompletionListener[Unit]((_) ⇒ cur.close())
 
         new IgniteQueryIterator[T, R](cur.iterator(), conv)
     }
